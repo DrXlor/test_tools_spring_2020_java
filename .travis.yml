@@ -1,0 +1,13 @@
+language: java
+os: linux
+dish: bionic
+
+jdk: openjdk8
+jobs:
+  include:
+    - stage: testing
+      script:
+        - mvn verify
+
+notifications:
+  email: false
