@@ -1,150 +1,108 @@
 package org.example;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.jupiter.api.Assertions.*;
-import org.junit.jupiter.api.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.junit.jupiter.params.provider.ValueSource;
-import org.apache.commons.io.IOUtils;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 
+class AppTest {
 
-/**
- * Unit test for simple App.
- */
-public class AppTest
-{
+    private App m;
 
-
-    @Test
-    public void TestAdditionalMatrices(){
-        int[][] matrixFirstExample = {{4,5},{6,7}};
-        int[][] matrixSecondExample = {{1,2},{3,4}};
-        int[][] matrixResult = {{5,7},{9,11}};
-        assertArrayEquals(matrixResult,App.additionMatrix(matrixFirstExample,matrixSecondExample));
+    @Before
+    public void init() {
+        m = new App();
     }
 
-
-    @Test
-    public void TestNotEqualSizeMultiplyMatrices(){
-        int[][] matrixA = {{4,5},{3,2},{6,7}};
-        int[][] matrixB = {{1,2},{3,4},{5,6}};
-        assertThrows(ArrayIndexOutOfBoundsException.class,()->{App.multiplyMatrix(matrixA,matrixB);});
+    @After
+    public void tearDown() {
+        m = null;
     }
 
     @Test
-    public void TestNotEqualSizeAdditionMatrices(){
-        int[][] matrixA = {{4,5},{3,2},{6,7},{4,7}};
-        int[][] matrixB = {{1,2},{3,4},{5,6}};
-        assertThrows(ArrayIndexOutOfBoundsException.class,()->{App.additionMatrix(matrixA,matrixB);});
+    public void readmatrix() throws FileNotFoundException {
+        int[] matrix = {1,21,12,41,124,65,124,64};
+         assertArrayEquals(matrix, m.readmatrix());
     }
 
     @Test
-    public void TestSubtractionMatrices(){
-        int[][] matrixFirstExample = {{4,5},{6,7}};
-        int[][] matrixSecondExample = {{1,2},{3,4}};
-        int[][] matrixResult = {{3,3},{3,3}};
-        assertArrayEquals(matrixResult,App.subMatrix(matrixFirstExample,matrixSecondExample));
+    public void sum() {
+        double[][] matrix1 = {{1,1},{1,1}};
+        double[][] matrix2 = {{1,1},{1,1}};
+        double[][] result = {{2,2},{2,2}};
+        assertArrayEquals(result, m.sum(matrix1, matrix2));
+    }
+    @Test
+    public void multiply() {
+        double[][] matrix1 = {{1,1},{1,1}};
+        double[][] matrix2 = {{2,3},{2,3}};
+        double[][] result = {{2,3},{2,3}};
+        assertArrayEquals(result, m.multiply(matrix1, matrix2));
+    }
+    @Test
+    public void comparison() {
+        double[][] matrix1 = {{1,214},{43,2}};
+        double[][] matrix2 = {{2,1},{1,1}};
+        int result = m.comparison(matrix1, matrix2);
+        Assert.assertEquals(-1, result);
+    }
+    @Test
+    public void subtraction() {
+        double[][] matrix1 = {{1,1},{1,1}};
+        double[][] matrix2 = {{2,3},{2,3}};
+        double[][] result = {{-1,-2},{-1,-2}};
+        assertArrayEquals(result, m.subtraction(matrix1, matrix2));
+    }
+    @Test
+    public void division() {
+        double[][] matrix1 = {{1,1},{1,1}};
+        double[][] matrix2 = {{2,2},{2,2}};
+        double[][] result = {{1,1},{1,1}};
+        assertArrayEquals(result, m.division(matrix1, matrix2));
     }
 
     @Test
-    public void TestMultiplyMatrices(){
-        int[][] matrixA = {{4,5,7},{-2,-4,8},{6,7,0}};
-        int[][] matrixB = {{1,2,3},{-4,5,0},{-3,4,6}};
-        int[][] matrixResult = {{-37,61,54},{-10,8,42},{-22,47,18}};
-        assertArrayEquals(matrixResult,App.multiplyMatrix(matrixA,matrixB));
-    }
-
-    @Test
-    public void TestTranspose(){
-        int[][] matrixA = {{4,5},{6,7}};
-        int[][] matrixResult = {{4,6},{5,7}};
-        assertArrayEquals(matrixResult,App.transpose(matrixA));
-    }
-
-    @Test
-    public void TestMultiplyMatrixByValue(){
-        int[][] matrixA = {{4,5},{6,7}};
-        int value = 3;
-        int[][] matrixResult = {{12,15},{18,21}};
-        assertArrayEquals(matrixResult,App.multiplyMatrixByValue(matrixA,3));
-    }
-
-    @Test
-    void TestFileMultiplyMatrices() {
-        int[][] matrixA = null;
-        int[][] matrixB = null;
-        int[][] expMatrix = null;
-        try (InputStream inputStream = getClass().getResourceAsStream("/matrixA.txt")) {
-            String result = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
-            matrixA = App.stringToMatrix(result);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        try (InputStream inputStream = getClass().getResourceAsStream("/matrixB.txt")) {
-            String result = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
-            matrixB = App.stringToMatrix(result);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        try (InputStream inputStream = getClass().getResourceAsStream("/expMatrix.txt")) {
-            String result = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
-            expMatrix = App.stringToMatrix(result);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        assertArrayEquals(expMatrix,App.multiplyMatrix(matrixA,matrixB));
-    }
-
-    @Test
-    void TestFileAdditionMatrices() {
-        int[][] matrixA = null;
-        int[][] matrixB = null;
-        int[][] expMatrix = null;
-        try (InputStream inputStream = getClass().getResourceAsStream("/matrixA.txt")) {
-            String result = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
-            matrixA = App.stringToMatrix(result);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        try (InputStream inputStream = getClass().getResourceAsStream("/matrixB.txt")) {
-            String result = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
-            matrixB = App.stringToMatrix(result);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        try (InputStream inputStream = getClass().getResourceAsStream("/expMatrixSum.txt")) {
-            String result = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
-            expMatrix = App.stringToMatrix(result);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        assertArrayEquals(expMatrix,App.additionMatrix(matrixA,matrixB));
+    void testApp() {
+        assertEquals(1, 1);
     }
 
     @ParameterizedTest
-    @CsvSource({"1,2,3,4,10,20,30,40",
-        "0,0,0,1,0,0,0,10",
-        "-5,-3,-4,-2,-50,-30,-40,-20",
-        "0,-2,3,0,0,-20,30,0"})
-    void TestMultiplyByValueParam(String str1,String str2,String str3,String str4,
-                              String str5,String str6,String str7,String str8) {
-
-        int [][] matrixA = {{Integer.parseInt(str1),Integer.parseInt(str2)},
-            {Integer.parseInt(str3),Integer.parseInt(str4)}};
-
-        int [][] expMatrix = {{Integer.parseInt(str5),Integer.parseInt(str6)},
-            {Integer.parseInt(str7),Integer.parseInt(str8)}};
-
-        int value = 10;
-
-        assertArrayEquals(expMatrix,App.multiplyMatrixByValue(matrixA,value));
+    @ValueSource(strings = { "1, 2, 3, 2, 1 ", "1, 3, 4, 3, 1 ", "1, 2, 3, 2, 1 ", "1, 3, 4, 3, 1 "})
+    void palindrome(String date) {
+        assertTrue(App.palindrome(date));
     }
+
+    @Test
+    public void transpose() {
+        double[][] matrix1 = {{2,5},{6,2}};
+        double[][] matrix2 = {{2,6},{5,2}};
+        assertArrayEquals(matrix2, m.transpose(matrix1));
+    }
+
+    @Test
+    public void determinant() throws FileNotFoundException {
+        double[][] matrix= {{2,5},{6,2}};
+           assertEquals(-26, m.determinant(matrix));
+    }
+
+    @Test
+    public void minor() {
+        double[][] matrix1 = {{2,5},{6,2}};
+        double[][] matrix2 = {{2}};
+        assertArrayEquals(matrix2, m.minor(matrix1,1,1));
+    }
+
 }
